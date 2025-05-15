@@ -1,0 +1,90 @@
+<odoo>
+    <record id="property_view_tree" model="ir.ui.view">
+        <field name="name">property tree</field>
+        <field name="model">property</field>
+        <field name="arch" type="xml">
+            <tree multi_edit="1">
+                <field name="name"/>
+                <field name="description" optional="1"/>
+                <field name="owner_id"/>
+                <field name="postcode"/>
+                <field name="date_availability"/>
+                <field name="expected_price" optional="1"/>
+                <field name="selling_price"/>
+                <field name="bedrooms"/>
+                <field name="living_area"/>
+                <field name="facades" optional="1"/>
+                <field name="garage"/>
+                <field name="garden"/>
+                <field name="garden_area" optional="1"/>
+                <field name="garden_orientation" optional="1"/>
+                <field name="tag_ids"/>
+            </tree>
+        </field>
+    </record>
+    <record id="property_view_form" model="ir.ui.view">
+        <field name="name">property form</field>
+        <field name="model">property</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="General info">
+                            <field name="description" required="1"/>
+                            <field name="date_availability" required="1"/>
+                            <field name="postcode"/>
+                            <field name="selling_price"/>
+                            <field name="expected_price"/>
+                            <field name="tag_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="additional info">
+                            <field name="owner_id"/>
+                            <field name="garden"/>
+                            <field name="garden_area"/>
+                            <field name="garden_orientation"/>
+                            <field name="bedrooms"/>
+                            <field name="garage"/>
+                            <field name="facades"/>
+                            <field name="living_area"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="property_view_search" model="ir.ui.view">
+        <field name="name">property search</field>
+        <field name="model">property</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="postcode"/>
+
+                <filter name="is_garden" string="Garden" domain="[('garden','=',True)]"/>
+                <filter name="is_not_garden" string="No Garden" domain="[('garden','=',False)]"/>
+                <filter name="is_garage" string="Garage" domain="[('garage','=',True)]"/>
+                <filter name="is_not_garage" string="No Garage" domain="[('garage','=',False)]"/>
+
+                <filter name="group_garden" string="Garden" context="{'group_by': 'garden'}"/>
+                <filter name="group_garage" string="Garage" context="{'group_by': 'garage'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="property_action" model="ir.actions.act_window">
+        <field name="name">Property</field>
+        <field name="res_model">property</field>
+
+    </record>
+    <menuitem
+            id="property_menu_item"
+            name="Properties"
+            parent="properties_menu"
+            action="property_action"
+    />
+</odoo>
