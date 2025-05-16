@@ -11,7 +11,7 @@ class Property(models.Model):
     description = fields.Text()
     postcode = fields.Char(required=True)
     date_availability = fields.Date()
-    expected_price = fields.Float(digits=(0,5 ))
+    expected_price = fields.Float()
     selling_price = fields.Float()
     bedrooms = fields.Integer()
     living_area = fields.Integer()
@@ -25,6 +25,7 @@ class Property(models.Model):
         ('east', 'East'),
         ('west', 'West')
     ], default="north")
+    diff = fields.Float(compute="_compute_diff")
 
     owner_id = fields.Many2one('owner')
     tag_ids = fields.Many2many('tag')
@@ -44,3 +45,19 @@ class Property(models.Model):
         for rec in self:
             if rec.bedrooms <= 0:
                 raise ValidationError('Please enter a valid number of bedrooms')
+
+    def _compute_diff(self):
+        for rec in self:
+            rec.diff = rec.expected_price - rec.selling_price
+
+    def action_draft(self):
+        for rec in self:
+            rec.state = 'draft'
+
+    def pending_draft(self):
+        for rec in self:
+            rec.state = 'pending'
+
+    def sold_draft(self):
+        for rec in self:
+            rec.state = 'sold'
