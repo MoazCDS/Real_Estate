@@ -1,0 +1,18 @@
+<!-- View inheritance -->
+<odoo>
+    <record id="view_order_form_inherit" model="ir.ui.view">
+        <field name="name">view order form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+<!--            <field name="partner_id" position="after">-->
+<!--                <field name="property_id"/>&lt;!&ndash; This is one way to do it, It's easier but less efficient&ndash;&gt;-->
+<!--            </field>-->
+            <!-- This was one way to do it, It's easier but less efficient-->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="property_id"/>
+            </xpath>
+            <!-- This was another way to do it, It's more complex but more efficient-->
+        </field>
+    </record>
+</odoo>

@@ -25,10 +25,11 @@ class Property(models.Model):
         ('east', 'East'),
         ('west', 'West')
     ], default="north")
-    diff = fields.Float(compute="_compute_diff")
+    diff = fields.Float(compute="_compute_diff",     store=True)
 
     owner_id = fields.Many2one('owner')
     tag_ids = fields.Many2many('tag')
+    order_ids = fields.One2many('sale.order', 'property_id', string="Orders")
 
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -46,9 +47,17 @@ class Property(models.Model):
             if rec.bedrooms <= 0:
                 raise ValidationError('Please enter a valid number of bedrooms')
 
+# The difference between the depends and the onchange is that the onchange only accepts views fields unlike the depends
+# Also in the onchange it returns a sudo record unlike the depends witch return a normal record
+    @api.depends('expected_price', 'selling_price', 'owner_id.phone')
     def _compute_diff(self):
         for rec in self:
             rec.diff = rec.expected_price - rec.selling_price
+
+    # @api.onchange('expected_price', 'selling_price')
+    # def _compute_diff(self):
+    #     for rec in self:
+    #         rec.diff = rec.expected_price - rec.selling_price
 
     def action_draft(self):
         for rec in self:
