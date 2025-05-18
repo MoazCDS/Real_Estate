@@ -6,7 +6,10 @@ from odoo.exceptions import ValidationError
 
 class Property(models.Model):
     _name = 'property'
+    _description = 'Property'
+    _inherit = ['mail.thread','mail.activity.mixin']
 
+    #To make the chatter track any changes in a specific field add the argument "tracking=True"
     name = fields.Char(default="New", size=10)
     description = fields.Text()
     postcode = fields.Char(required=True)
@@ -25,11 +28,15 @@ class Property(models.Model):
         ('east', 'East'),
         ('west', 'West')
     ], default="north")
-    diff = fields.Float(compute="_compute_diff",     store=True)
+    diff = fields.Float(compute="_compute_diff", store=True)
+    # Readonly=True by default. Store=False by default. It has to be the same type as the thing it's related to
+    owner_phone = fields.Char(related='owner_id.phone')
+    owner_address = fields.Char(related="owner_id.address")
 
     owner_id = fields.Many2one('owner')
     tag_ids = fields.Many2many('tag')
     order_ids = fields.One2many('sale.order', 'property_id', string="Orders")
+    line_ids = fields.One2many('property.line', 'property_id')
 
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -37,6 +44,7 @@ class Property(models.Model):
         ('sold', 'Sold')
     ], default="draft")
 
+    # If you already had 2 of the same name you have to remove them first or this will not work
     _sql_constraints = [
         ('name_key', 'unique("name")', 'This name already exists')
     ]
@@ -70,3 +78,11 @@ class Property(models.Model):
     def sold_draft(self):
         for rec in self:
             rec.state = 'sold'
+
+
+class PropertyLines(models.Model):
+    _name = 'property.line'
+
+    area = fields.Float()
+    description = fields.Char()
+    property_id = fields.Many2one('property')

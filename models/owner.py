@@ -5,6 +5,7 @@ class Owner(models.Model):
     _name = 'owner'
 
     name = fields.Char(required=True)
+    _description = 'Owner'
     phone = fields.Char()
     address = fields.Char()
 
