@@ -71,11 +71,11 @@ class Property(models.Model):
         for rec in self:
             rec.state = 'draft'
 
-    def pending_draft(self):
+    def action_pending(self):
         for rec in self:
             rec.state = 'pending'
 
-    def sold_draft(self):
+    def action_sold(self):
         for rec in self:
             rec.state = 'sold'
 

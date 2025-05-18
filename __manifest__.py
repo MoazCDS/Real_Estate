@@ -11,7 +11,7 @@
         'views/owner_view.xml',
         'views/tag_view.xml',
         'views/sale_order_view.xml',
-        'security/ir.model.access.csv'
+        'security/ir.model.access.csv',
     ],
     'assets':{
         'web.assets_backend': ['app_one/static/src/css/property.css']

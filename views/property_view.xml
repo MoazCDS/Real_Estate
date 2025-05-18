@@ -32,9 +32,9 @@
                     <header>
                         <button name="action_draft" string="Set To Draft" type="object" class="btn-primary"
                                 invisible="state == 'draft'"/>
-                        <button name="pending_draft" string="Set To Pending" type="object" class="btn-primary"
+                        <button name="action_pending" string="Set To Pending" type="object" class="btn-primary"
                                 invisible="state != 'draft'"/>
-                        <button name="sold_draft" string="Set To Sold" type="object" class="btn-success"
+                        <button name="action_sold" string="Set To Sold" type="object" class="btn-success"
                                 invisible="state != 'pending'"/>
                         <field name="state" widget="statusbar"/>
                     </header>
