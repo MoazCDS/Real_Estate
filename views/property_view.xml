@@ -3,7 +3,7 @@
         <field name="name">property tree</field>
         <field name="model">property</field>
         <field name="arch" type="xml">
-            <tree multi_edit="1" class="header_custom">
+            <tree multi_edit="1" class="header_custom" decoration-danger="(is_late)">
                 <field name="name"/>
                 <field name="description" optional="1"/>
                 <field name="owner_id"/>
@@ -20,6 +20,8 @@
                 <field name="garden_area" optional="1"/>
                 <field name="garden_orientation" optional="1"/>
                 <field name="tag_ids"/>
+                <field name="active" invisible="1"/>
+                <field name="is_late" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -46,13 +48,16 @@
                     </div>
                     <group>
                         <group string="General info">
+                            <field name="expected_selling_date" string="Expected Availability Date"/>
                             <field name="date_availability" string="Availability Date" required="1"/>
+                            <field name="is_late" string="Late" readonly="True" invisible="1"/>
                             <field name="postcode"/>
                             <field name="selling_price"/>
                             <field name="expected_price"/>
                             <field name="diff" string="Price Difference"/>
                             <field name="tag_ids" widget="many2many_tags"/>
                             <field name="order_ids" widget="many2many_tags" readonly="1"/>
+                            <field name="active" invisible="1"/>
                         </group>
                         <group string="additional info">
                             <field name="owner_id"/>
@@ -108,7 +113,25 @@
     <record id="property_action" model="ir.actions.act_window">
         <field name="name">Property</field>
         <field name="res_model">property</field>
-
+    </record>
+    <record id="property_close" model="ir.actions.server">
+        <field name="name">Close</field>
+        <field name="model_id" ref="model_property"/>
+        <field name="binding_model_id" ref="model_property"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = records.action_closed()
+        </field>
+    </record>
+    <record id="check_selling_date_cron" model="ir.cron">
+        <field name="name">Property: Check Selling Date</field>
+        <field name="model_id" ref="model_property"/>
+        <field name="state">code</field>
+        <field name="code">model.check_expected_selling_date()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
     </record>
     <menuitem
             id="property_menu_item"

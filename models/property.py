@@ -14,6 +14,8 @@ class Property(models.Model):
     description = fields.Text()
     postcode = fields.Char(required=True)
     date_availability = fields.Date()
+    expected_selling_date = fields.Date(reqired=True)
+    is_late = fields.Boolean()
     expected_price = fields.Float()
     selling_price = fields.Float()
     bedrooms = fields.Integer()
@@ -29,6 +31,8 @@ class Property(models.Model):
         ('west', 'West')
     ], default="north")
     diff = fields.Float(compute="_compute_diff", store=True)
+    active = fields.Boolean(default=True)
+
     # Readonly=True by default. Store=False by default. It has to be the same type as the thing it's related to
     owner_phone = fields.Char(related='owner_id.phone')
     owner_address = fields.Char(related="owner_id.address")
@@ -41,7 +45,8 @@ class Property(models.Model):
     state = fields.Selection([
         ('draft', 'Draft'),
         ('pending', 'Pending'),
-        ('sold', 'Sold')
+        ('sold', 'Sold'),
+        ('closed', 'Closed')
     ], default="draft")
 
     # If you already had 2 of the same name you have to remove them first or this will not work
@@ -78,6 +83,18 @@ class Property(models.Model):
     def action_sold(self):
         for rec in self:
             rec.state = 'sold'
+
+    def action_closed(self):
+        for rec in self:
+            rec.state = 'closed'
+
+    def check_expected_selling_date(self):
+        property_ids = self.search([])
+        for rec in property_ids:
+            print(rec)
+            if rec.expected_selling_date and rec.expected_selling_date < fields.date.today():
+                if rec.state == 'draft' or rec.state == 'pending':
+                    rec.is_late = True
 
 
 class PropertyLines(models.Model):
